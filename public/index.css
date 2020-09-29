@@ -8,7 +8,7 @@ body {
 }
 
 .container {
-    margin: 50px auto;
+    margin: 25px auto;
     color: #272d36;
     font-family: sans-serif;
     text-align: center;
@@ -17,12 +17,13 @@ body {
 .timer-selection {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
 }
 
 li {
     list-style: none;
-    margin: 10px
+    margin: 5px 10px;
 }
 
 h1 {
