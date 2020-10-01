@@ -1,10 +1,9 @@
-// elements
+// ––– elements –––
+// variables
 const   display = document.getElementById("display"),
         startBtn = document.getElementById("startStop"),
         resetBtn = document.getElementById("reset"),
         timerBtns = document.getElementsByClassName("timerBtn");
-
-// variables
 var status = "stopped",
     timers = [],
     displTimers = [];
@@ -12,59 +11,24 @@ for(let i=0; i<3; i++){
     timers.push([0,0,0,0]);
     displTimers.push(["00","00","00", "00"]);
 };
-var timerNo = 0;
+var currentTimer = 0;
 
-// stopwatch functionality
+// ––– set up buttons –––
+startBtn.addEventListener('click', startStop);
+resetBtn.addEventListener('click', reset);
+for(let i=0; i<timerBtns.length; i++){
+    timerBtns[i].addEventListener('click', () =>{
+        for(let j of timerBtns){
+            j.classList.remove('selected');
+        };
+        currentTimer = i;
+        timerBtns[i].classList.add('selected');
+        setDisplay()
+    })
+};
 
-function stopWatch(){
-    timers[timerNo][0]++;
-    if(timers[timerNo][0] === 100){
-        tick(0);
-    } if(timers[timerNo][1] == 60){
-        tick(1);
-    } if(timers[timerNo][2] == 60){
-        tick(2);
-    }
-    setDisplay(timerNo)
-}
-
-function tick(num){
-    timers[timerNo][num] = 0;
-    timers[timerNo][num+1]++;
-}
-
-function setDisplay(){
-    time = standardiseTimes()
-    display.textContent = time;
-    timerBtns[timerNo].textContent = time;
-}
-
-function standardiseTimes(){
-    for(let i=0; i<4; i++){
-        if(timers[timerNo][i]<10){
-            displTimers[timerNo][i] = `0${timers[timerNo][i]}`
-        }
-        else {
-            displTimers[timerNo][i] = timers[timerNo][i];
-        }
-    }
-    return `${displTimers[timerNo][3]}:${displTimers[timerNo][2]}:${displTimers[timerNo][1]}:${displTimers[timerNo][0]}`;
-}
-
-function start(){
-    status = "running";
-    interval = window.setInterval(stopWatch, 10);
-    startBtn.textContent = "Stop"
-    startBtn.classList.add("selected");
-}
-
-function stop(){
-    status = "stopped";
-    window.clearInterval(interval);
-    startBtn.textContent = "Start"
-    startBtn.classList.remove("selected");
-}
-
+// ––– functions ––––
+//start/stop button
 function startStop(){
     if(status === 'stopped'){
         start()
@@ -73,24 +37,68 @@ function startStop(){
     }
 }
 
+//reset clock
 function reset(){
     if(status === 'running'){
         stop();
     }
-    timers[timerNo] = [0,0,0,0]
+    timers[currentTimer] = [0,0,0,0]
     setDisplay();
 }
 
-// button functionality
-startBtn.addEventListener('click', startStop);
-resetBtn.addEventListener('click', reset);
-for(let i=0; i<timerBtns.length; i++){
-    timerBtns[i].addEventListener('click', () =>{
-        for(let j of timerBtns){
-            j.classList.remove('selected');
-        };
-        timerNo = i;
-        timerBtns[i].classList.add('selected');
-        setDisplay()
-    })
-};
+//start current timer
+function start(){
+    status = "running";
+    interval = window.setInterval(stopWatch, 10);
+    startBtn.textContent = "Stop"
+    startBtn.classList.add("selected");
+}
+
+//stop current timer
+function stop(){
+    status = "stopped";
+    window.clearInterval(interval);
+    startBtn.textContent = "Start"
+    startBtn.classList.remove("selected");
+}
+
+//stop watch functionality
+function stopWatch(){
+    timers[currentTimer][0]++;
+    if(timers[currentTimer][0] === 100){
+        tick(0);
+    } if(timers[currentTimer][1] === 60){
+        tick(1);
+    } if(timers[currentTimer][2] === 60){
+        tick(2);
+    }
+    setDisplay()
+}
+
+function tick(num){
+    timers[currentTimer][num] = 0;
+    timers[currentTimer][num+1]++;
+}
+
+//update displayed time
+function setDisplay(){
+    time = standardiseTimes()
+    display.textContent = time;
+    timerBtns[currentTimer].textContent = time;
+}
+
+//add extra '0's to display text where required
+function standardiseTimes(){
+    let t = timers[currentTimer];
+    let d = displTimers[currentTimer]
+    for(let i=0; i<4; i++){
+        if(t[i]<10){
+            d[i] = `0${t[i]}`
+        }
+        else {
+            d[i] = t[i];
+        }
+    }
+    return `${d[3]}:${d[2]}:${d[1]}:${d[0]}`;
+}
+
